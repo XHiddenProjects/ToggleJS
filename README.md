@@ -92,3 +92,42 @@ const toggle = new ToggleJS('#toggleSwitch', options);
     }
 };
 ```
+5. Stylesheet
+Styles in the **styles** object must be a _cAmEl_ format: ie. `backgroundColor, opacity, fontSize`
+
+```js
+styles:{
+  //Style the track
+  track:{
+    //Track state
+    0:{
+      // Stylesheet
+    }
+  },
+  //Style the thumb
+  thumb:{
+    //Thumb state
+    0:{
+      // Stylesheet
+    }
+  }
+}
+```
+
+6. `onToggle()` and `onInit()`
+Use these to get the results of the toggle switch
+```json
+{
+  "value": "(Int) toggleSwitchStatus",
+  "label": "(String|Int) toggleSwitchLabel",
+  "disabled": "(Boolean) toggleSwitchDisabledStatus"
+}
+```
+
+7. Extra methods
+Here is extra methods that can be used
+```js
+console.log(toggle.getValue()); //Returns the value of the toggle
+toggle.setState(Number); //Sets the state of the toggle switch
+toggle.setDisabled(Boolean); //Set the toggle switch to be disabled  
+```
