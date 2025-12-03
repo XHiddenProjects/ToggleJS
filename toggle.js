@@ -304,18 +304,33 @@ class ToggleJS {
             });
         }
     }
-
+    
+    /**
+     * Returns the value of the toggle switch
+     *
+     * @returns {Number} State number
+     */
     getValue() {
         return this.options.states[this.stateIndex];
     }
-
+    
+    /**
+     * Sets the state of the toggle switch
+     *
+     * @param {Number} index The state number of the toggle switch
+     */
     setState(index) {
         if (index >= 0 && index < this.options.states.length) {
             this.stateIndex = index;
             this._updateUI();
         }
     }
-
+    
+    /**
+     * Enable/Disable the toggle switch
+     *
+     * @param {Boolean} disabled TRUE if disabled, else FALSE
+     */
     setDisabled(disabled) {
         this.isDisabled = disabled;
         this.track.style.cursor = disabled ? 'not-allowed' : 'pointer';
