@@ -1,6 +1,8 @@
 # ToggleJS
 A customizable  toggle switch all written in JS
 
+Demo: [https://jsfiddle.net/qy0fu5ex/](https://jsfiddle.net/qy0fu5ex/)
+
 1. Create a container in HTML
 ```html
 <div id="toggleSwitch"></div>
