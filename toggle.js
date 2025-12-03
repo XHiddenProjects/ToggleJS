@@ -134,6 +134,9 @@ class ToggleJS {
                 //Default necessities
                 if(!this.options.styles.track[i].position) this.options.styles.track[i].position = 'relative';
                 if(!this.options.styles.track[i].transition) this.options.styles.track[i].transition = 'background-color 0.3s';
+                if(!this.options.styles.track[i].width) this.options.styles.track[i].width = '60px';
+                if(!this.options.styles.track[i].height) this.options.styles.track[i].height = '30px';
+                if(!this.options.styles.track[i].borderRadius) this.options.styles.track[i].borderRadius = '15px';
             }
             if(!this.options.styles.thumb[i])
                 this.options.styles.thumb[i] = defaultThumbStyle;
@@ -143,6 +146,9 @@ class ToggleJS {
                 if(!this.options.styles.thumb[i].top) this.options.styles.thumb[i].top = '1px';
                 if(!this.options.styles.thumb[i].left) this.options.styles.thumb[i].left = '0px';
                 if(!this.options.styles.thumb[i].transition) this.options.styles.thumb[i].transition = 'left 0.3s';
+                if(!this.options.styles.thumb[i].width) this.options.styles.thumb[i].width = '28px';
+                if(!this.options.styles.thumb[i].height) this.options.styles.thumb[i].height = '28px';
+                if(!this.options.styles.thumb[i].borderRadius) this.options.styles.thumb[i].borderRadius = '50%';
             }
         }
         
@@ -212,10 +218,6 @@ class ToggleJS {
 
         // Set initial position
         this._updateUI();
-
-        // Remove this duplicate toggle event which causes jumping:
-        // if (!this.isDisabled)
-        //     this.track.addEventListener('click', () => this._toggleState());
 
         // Instead, add directional click handling:
         this.track.addEventListener('click', (e) => {
