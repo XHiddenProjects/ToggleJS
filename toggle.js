@@ -137,6 +137,7 @@ class ToggleJS {
                 if(!this.options.styles.track[i].width) this.options.styles.track[i].width = '60px';
                 if(!this.options.styles.track[i].height) this.options.styles.track[i].height = '30px';
                 if(!this.options.styles.track[i].borderRadius) this.options.styles.track[i].borderRadius = '15px';
+                if(!this.options.styles.track[i].cursor) this.options.styles.track[i].cursor = 'pointer';
             }
             if(!this.options.styles.thumb[i])
                 this.options.styles.thumb[i] = defaultThumbStyle;
@@ -164,24 +165,53 @@ class ToggleJS {
         }).join(';');
         return cssString;
     }
-
+    //Returns the styles
+    _getStyles(){
+        return {
+            trackStyles: (this.options.styles.track && this.options.styles.track[this.stateIndex]) || this.options.styles.track['default'] || {},
+            thumbStyles: (this.options.styles.thumb && this.options.styles.thumb[this.stateIndex]) || this.options.styles.thumb['default'] || {}
+        };
+    }
     _applyStateStyles() {
         // Safely get style for current state, fallback to default if missing
-        const trackStyles = (this.options.styles.track && this.options.styles.track[this.stateIndex]) || this.options.styles.track['default'] || {};
-        const thumbStyles = (this.options.styles.thumb && this.options.styles.thumb[this.stateIndex]) || this.options.styles.thumb['default'] || {};
+        const trackStyles = this._getStyles().trackStyles;
+        const thumbStyles = this._getStyles().thumbStyles;
 
         // Apply styles
         this.track.style.cssText = this._fixStyle(trackStyles);
         this.thumb.style.cssText = this._fixStyle(thumbStyles);
-
-        // Update label font size based on thumb size
-        const thumbWidth = parseFloat(thumbStyles.width || '28');
-        const thumbHeight = parseFloat(thumbStyles.height || '28');
-        this.labelInside.style.fontSize = `${Math.floor(thumbWidth / thumbHeight) * 1.5}vh`;
-
+        const fontSizeVh = this._properFS(thumbStyles);
+        // Set font size in vh units
+        this.labelInside.style.fontSize = `${fontSizeVh}vh`;
         this._updateLabel();
     }
+    _properFS(thumbStyles) {
+        console.log(thumbStyles);
+        const thumbWidth = parseFloat(thumbStyles.width);
+        const initialVh = (thumbWidth / window.innerWidth) * 100 * 0.4; // initial estimate
+        let fontSizeVh = initialVh;
 
+        // Set initial font size
+        this.labelInside.style.fontSize = `${fontSizeVh}vh`;
+
+        const minFontSizeVh = 4; // prevent text from becoming too small
+
+        const checkFit = () => {
+            const textWidthPx = this.labelInside.offsetWidth;
+            const thumbPx = thumbWidth;
+            if (textWidthPx > thumbPx && fontSizeVh > minFontSizeVh) {
+                // Reduce font size proportionally
+                const newFontSizeVh = (thumbPx / textWidthPx) * fontSizeVh;
+                this.labelInside.style.fontSize = `${newFontSizeVh}vh`;
+                fontSizeVh = newFontSizeVh;
+                setTimeout(checkFit, 0); // re-try
+            }
+            // If text fits or font is too small, stop
+        };
+
+        // Run after styles are applied
+        setTimeout(checkFit, 0);
+    }
     _init() {
         // Create track
         this.track = document.createElement('div');
@@ -199,8 +229,8 @@ class ToggleJS {
         this.labelInside.style.top = '50%';
         this.labelInside.style.left = '50%';
         this.labelInside.style.transform = 'translate(-50%, -50%)';
-        const fs = (parseFloat(this.options.styles.thumb[this.stateIndex]?.width || '28')/parseFloat(this.options.styles.thumb[this.stateIndex]?.height || '28'))*1.5;
-        this.labelInside.style.fontSize = `${fs}vh`;
+
+        this.labelInside.style.fontSize = `${this._properFS(this._getStyles().thumbStyles)}vh`;
         this.labelInside.style.pointerEvents = 'none';
         this.thumb.appendChild(this.labelInside);
 
@@ -226,7 +256,7 @@ class ToggleJS {
             const clickX = e.clientX;
 
             if (clickX > thumbRect.right) {
-                // Clicked on the right side - move to next state if possible
+                // Clicked on the right side - move to next state if not at last
                 if (this.stateIndex < this.options.states.length - 1) {
                     this.setState(this.stateIndex + 1);
                     if (typeof this.options.onToggle === 'function') {
@@ -238,7 +268,7 @@ class ToggleJS {
                     }
                 }
             } else if (clickX < thumbRect.left) {
-                // Clicked on the left side - move to previous state if possible
+                // Clicked on the left side - move to previous state if not at first
                 if (this.stateIndex > 0) {
                     this.setState(this.stateIndex - 1);
                     if (typeof this.options.onToggle === 'function') {
@@ -250,7 +280,7 @@ class ToggleJS {
                     }
                 }
             } else {
-                // Clicked directly on the thumb; toggle normally
+                // Clicked directly on the thumb; toggle to next state or stay
                 this._toggleState();
             }
         });
