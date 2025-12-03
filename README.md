@@ -5,7 +5,7 @@ A customizable  toggle switch all written in JS
 ```html
 <div id="toggleSwitch"></div>
 ...
-<script src="https://cdn.jsdelivr.net/gh/XHiddenProjects/ToggleJS@0.0.3/toggle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/XHiddenProjects/ToggleJS@0.0.4/toggle.min.js"></script>
 <script src="../path/to/your/mian.js"></script>
 ```
 
